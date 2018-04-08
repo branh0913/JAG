@@ -1,3 +1,5 @@
+go_import_path: github.com/branh0913/JAG
+
 language: go
 
 go:
