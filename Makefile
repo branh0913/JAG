@@ -1,4 +1,4 @@
-GOCMD=/usr/local/bin/go
+GOCMD=go
 WORKDIR=/opt/jag
 WORKCONF=$(WORKDIR)/config
 JAGCONF=config/jenkins_automation.json
