@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"fmt"
 )
 
 type Plugins interface {
@@ -39,6 +40,7 @@ func (p PluginInsecure) Create() (string, error) {
 		data := url.Values{}
 		data.Set(p.Resource, string(f))
 		req, err := http.PostForm(p.Endpoint, data)
+		fmt.Println(req)
 		if err != nil {
 			log.Fatalf("Post did not work: %v", err)
 		}
@@ -50,7 +52,6 @@ func (p PluginInsecure) Create() (string, error) {
 		}
 
 		defer req.Body.Close()
-
 		return string(respBody)
 	}()
 

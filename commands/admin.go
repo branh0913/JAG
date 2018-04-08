@@ -8,10 +8,11 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+
 )
 
 type JenkinsUser interface {
-	New(endpoint, resource, username, password string) (*Admin, error)
+	New(endpoint, resource, username, password string) (error, *Admin)
 	Create() (string, error)
 }
 
