@@ -68,8 +68,6 @@ println(prop.getApiTokenInsecure())`
 			log.Fatalf("Request object could not be build %v", err)
 		}
 
-
-
 		req.SetBasicAuth(t.Username,t.Password)
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 		clientresp, err := client.Do(req)
@@ -81,8 +79,6 @@ println(prop.getApiTokenInsecure())`
 
 		defer clientresp.Body.Close()
 		respString, err := ioutil.ReadAll(clientresp.Body)
-
-
 
 		return string(respString)
 	}()

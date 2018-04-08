@@ -18,12 +18,13 @@ type configimpl interface {
 
 type Config struct {
 	Endpoint      string            `json:"endpoint"`
-	CredentialID  string            `json:"credentialid"`
 	Function      string            `json:"function"`
 	LockFile      string            `json:"lockfile"`
 	AdminUser     string            `json:"adminuser"`
 	AdminPassword string            `json:"adminpassword"`
 	PluginScript  map[string]string `json:"pluginscript"`
+	ServiceAccount string           `json:"serviceuser"`
+	ServicePass    string           `json:"servicepass"`
 }
 
 type JenkinsConfig struct {
@@ -71,15 +72,14 @@ func main() {
 		log.Fatalf("Cannot load configuation file %v \n", err)
 	}
 
-	fmt.Println(configobj)
-
 	endpoint := configobj.Jenkins.Endpoint
 	function := configobj.Jenkins.Function
 	plugins := configobj.Jenkins.PluginScript
 	username := configobj.Jenkins.AdminUser
 	password := configobj.Jenkins.AdminPassword
-	//credentialsid  := configobj.Jenkins.LockFile
 	lockfile := configobj.Jenkins.LockFile
+	serviceaccount := configobj.Jenkins.ServiceAccount
+	servicepass := configobj.Jenkins.ServicePass
 
 	lockfilecheck, err := check(endpoint, function, lockfile, plugins)
 
@@ -103,10 +103,16 @@ func main() {
 	generateconfig := generatecmd.String("config", "", "File for generated output")
 	generateuser := generatecmd.String("user", "", "User used in Config")
 
+	//CredentialId commands
+
+	credentialcmd := flag.NewFlagSet("credential", flag.ExitOnError)
+	credentialCreate := credentialcmd.String("create", "", "Create id of credentialId")
+	credentialList := credentialcmd.Bool("list", false, "List credential ids")
+
 	if len(os.Args) < 2 {
-		println("Type jag user <command>")
-		println("user <command>")
-		println("generate")
+		fmt.Println("Type jag user <command>")
+		fmt.Println("or jag generate <command>")
+
 	}
 
 	switch os.Args[1] {
@@ -115,8 +121,45 @@ func main() {
 		UserCommands(usercmd, usercreate, unsecure, endpoint, function, username, password)
 	case "generate":
 		generatecmd.Parse(os.Args[2:])
-		GenerateCommands(generatecmd, generateuser, generateconfig, endpoint, function, username, password)
+		GenerateCommands(generatecmd, generateconfig, generateuser, endpoint, function, username, password)
+	case "credential":
+		credentialcmd.Parse(os.Args[2:])
+		CredentialCommand(endpoint, function, username, password, serviceaccount,
+			              servicepass, credentialcmd, credentialCreate,
+			              credentialList)
 	}
+
+}
+func CredentialCommand(endpoint, function, username, password, serviceaccount, servicepass string,
+	credentialcmd *flag.FlagSet, credentialCreate *string, credentailList *bool) {
+
+		if credentialcmd.Parsed(){
+			if *credentialCreate == ""{
+				fmt.Println("Please enter a credentialid")
+			}
+			jbinst := new(jobbuilder.CredentialID)
+			credentials, err := jbinst.New(endpoint, function,
+				username, password,
+				serviceaccount, servicepass,
+				credentialCreate)
+
+			if err != nil{
+				log.Fatalf("Could not instantiate credential object: %v", err)
+			}
+
+			createcredential, err := credentials.Create()
+
+			if err != nil{
+				log.Fatalf("Could not create credential id: %v \n", err)
+			}
+
+			fmt.Println(createcredential)
+
+			if err != nil{
+				log.Fatalf("Could not instantiate new credential object")
+			}
+
+		}
 
 }
 
@@ -124,7 +167,7 @@ func UserCommands(usercmd *flag.FlagSet, usercreate *bool,
 	              unsecure *bool, endpoint, function,
 	              username string, password string) {
 	if usercmd.Parsed() {
-		if !*usercreate && !*unsecure {
+		if *usercreate && *unsecure {
 			fmt.Println("Please enter a valid user command")
 			flag.PrintDefaults()
 
@@ -134,11 +177,13 @@ func UserCommands(usercmd *flag.FlagSet, usercreate *bool,
 
 		insecureinit, err := juser.New(endpoint, function, username, password)
 
-		if err != nil {
-			log.Fatalf("Could not insantiate user object %v", err)
+		if err != nil{
+			log.Fatalf("Could not invoke plugin build %v \n", insecureinit)
 		}
 
 		insecureinit.Create()
+
+
 	}
 }
 
@@ -160,7 +205,22 @@ func GenerateCommands(generatecmds *flag.FlagSet,
 				log.Fatalf("Failed to instantiate generate object %v", err)
 			}
 
-			fmt.Println(gennew.Retrieve(*generateuser))
+			apitoken :=  gennew.Retrieve(*generateuser)
+			geninst := new(jobbuilder.JBuilderConfig)
+			configbuild, err := geninst.New(endpoint, apitoken, *generateconfig)
+
+			if err != nil{
+				log.Fatalf("Failed to instantiate new config object %v \n", err.Error())
+			}
+
+			buildhandler := configbuild.BuildFile(*generateuser, "templates/jenkins.ini.gotmpl")
+
+			if buildhandler{
+				fmt.Printf("jenkins.ini has been generated at %v\n", generateconfig)
+			}
+
 	   }
 
 }
+
+

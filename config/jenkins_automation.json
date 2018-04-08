@@ -1,7 +1,6 @@
 {
   "jenkins":{
     "endpoint": "http://localhost:3000/scriptText",
-    "credentialid": "jenkinsci_automation",
     "function": "script",
     "lockfile": "jag.lock",
     "adminuser": "admin",
@@ -9,7 +8,9 @@
     "pluginscript":{
       "name": "installPlugins",
       "script": "groovyScripts/installPlugins.groovy"
-    }
+    },
+    "serviceuser": "YmhhcnJlbGw=",
+    "servicepass": "VGhhbm9zNDU="
   }
 }
 

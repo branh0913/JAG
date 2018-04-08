@@ -4,6 +4,7 @@ import hudson.PluginWrapper
 
 Set<String> plugins_to_install = [
     "git",
+    "pipeline-model-definition",
     "token-macro",
     "matrix-auth",
     "cloudbees-folder",

@@ -1,4 +1,7 @@
 GOCMD=/usr/local/bin/go
+WORKDIR=/opt/jag
+WORKCONF=$(WORKDIR)/config
+JAGCONF=config/jenkins_automation.json
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
@@ -7,7 +10,10 @@ BINARY_NAME=/usr/local/bin/jag
 
 
 all: build test
-build: 
+build:
+	mkdir $(WORKDIR)
+	mkdir -p $(WORKCONF)
+	cp $(JAGCONF) $(WORKCONF)
 	$(GOBUILD) -o $(BINARY_NAME) -v
 test: 
 	$(GOTEST) -v ./...
