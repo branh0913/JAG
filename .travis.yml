@@ -2,7 +2,7 @@ language: go
 
 
 install:
- - github.com/branh0913/JAG
+ - go get github.com/branh0913/JAG
 go:
   - "1.9"
   - "1.10"
