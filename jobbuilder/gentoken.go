@@ -1,18 +1,18 @@
 package jobbuilder
 
 import (
-	"html/template"
 	"bytes"
-	"log"
-	"net/url"
-	"net/http"
-	"strings"
+	"html/template"
 	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
+	"strings"
 )
 
 type APIToken interface {
 	New(endpoint, resource, username, password string) (*Token, error)
-	Retrieve(user string) (string)
+	Retrieve(user string) string
 }
 
 type Token struct {
@@ -32,7 +32,7 @@ func (t *Token) New(endpoint, resource, username, password string) (*Token, erro
 	}, nil
 }
 
-func (t Token) Retrieve(user string) (string)  {
+func (t Token) Retrieve(user string) string {
 
 	type Currentuser struct {
 		Currentuser string
@@ -50,30 +50,29 @@ println(prop.getApiTokenInsecure())`
 
 	tmplinvoke := tmpl.Execute(&apitoken, userobj)
 
-	if tmplinvoke != nil{
+	if tmplinvoke != nil {
 		log.Fatal("Error when trying to invoke user lookup template %v \n", tmplinvoke)
 	}
 
 	log.Printf("Starting retrieval of API Token...")
 
-	tokenresp := func () (string){
+	tokenresp := func() string {
 
 		client := &http.Client{}
 		u := url.Values{}
 		u.Set(t.Resource, apitoken.String())
 
-		req,err := http.NewRequest(http.MethodPost, t.Endpoint, strings.NewReader(u.Encode()))
+		req, err := http.NewRequest(http.MethodPost, t.Endpoint, strings.NewReader(u.Encode()))
 
-		if err != nil{
+		if err != nil {
 			log.Fatalf("Request object could not be build %v", err)
 		}
 
-		req.SetBasicAuth(t.Username,t.Password)
+		req.SetBasicAuth(t.Username, t.Password)
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 		clientresp, err := client.Do(req)
 
-
-		if err != nil{
+		if err != nil {
 			log.Fatalf("Request failed with %v \n", err)
 		}
 

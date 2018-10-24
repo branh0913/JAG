@@ -1,11 +1,11 @@
 package commands
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
-	"fmt"
 )
 
 type Plugins interface {

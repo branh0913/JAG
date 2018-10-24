@@ -9,9 +9,8 @@ import (
 
 type Config interface {
 	New(endpoint, apitoken, jconfigpath string) (*JBuilderConfig, error)
-	BuildFile(currentuser string, templatePath string) (bool)
+	BuildFile(currentuser string, templatePath string) bool
 }
-
 
 type JBuilderConfig struct {
 	APIToken    string
@@ -19,7 +18,7 @@ type JBuilderConfig struct {
 	JConfigPath string
 }
 
-func (j *JBuilderConfig) New(endpoint, apitoken, jconfigpath string) (*JBuilderConfig, error){
+func (j *JBuilderConfig) New(endpoint, apitoken, jconfigpath string) (*JBuilderConfig, error) {
 
 	return &JBuilderConfig{
 		Endpoint:    endpoint,
@@ -28,35 +27,33 @@ func (j *JBuilderConfig) New(endpoint, apitoken, jconfigpath string) (*JBuilderC
 	}, nil
 }
 
+func (j JBuilderConfig) BuildFile(currentuser string, templatePath string) bool {
 
-func (j JBuilderConfig) BuildFile(currentuser string, templatePath string) (bool){
-
-	type CurrentUser struct{
-		CUser string
+	type CurrentUser struct {
+		CUser    string
 		APIToken string
 		Endpoint string
 	}
 
 	cuserinst := CurrentUser{CUser: currentuser,
-						     APIToken: strings.Trim(j.APIToken, "\n"),
-						     Endpoint: strings.Replace(j.Endpoint,"/scriptText", "", 1)}
+		APIToken: strings.Trim(j.APIToken, "\n"),
+		Endpoint: strings.Replace(j.Endpoint, "/scriptText", "", 1)}
 
-	 t, err := template.ParseFiles(templatePath)
+	t, err := template.ParseFiles(templatePath)
 
-
-	if err != nil{
+	if err != nil {
 		log.Fatalf("Could not generate template because %v\n", err)
 		return false
 	}
 
 	f, err := os.Create(j.JConfigPath)
 
-	if err != nil{
+	if err != nil {
 		log.Fatalf("Could not create file because of %v \n", err)
 		os.Exit(2)
 		return false
 	}
 
-	t.Execute(f,&cuserinst)
+	t.Execute(f, &cuserinst)
 	return true
 }

@@ -1,8 +1,8 @@
 package jobbuilder_test
 
 import (
+	"github.com/brharrelldev/jag/jobbuilder"
 	"testing"
-	"JAG/jobbuilder"
 )
 
 func TestCredentialID_Create(t *testing.T) {
@@ -11,10 +11,10 @@ func TestCredentialID_Create(t *testing.T) {
 	var ptrstr *string
 	sa_user := "ZmFrZQ=="
 	sa_pass := "ZmFrZXBhc3M="
-	testNew, err:= test.New("http://example.com", "blah", "blah", "pass",sa_user,sa_pass,
-		                     ptrstr)
+	testNew, err := test.New("http://example.com", "blah", "blah", "pass", sa_user, sa_pass,
+		ptrstr)
 
-	if err != nil{
+	if err != nil {
 		t.Errorf("Could not instantiate %v %v", err, testNew)
 	}
 }
@@ -24,17 +24,16 @@ func TestCredentialID_Create2(t *testing.T) {
 	var ptrstr *string
 	sa_user := "ZmFrZQ=="
 	sa_pass := "ZmFrZXBhc3M="
-	testNew, err:= test.New("http://example.com", "blah", "blah", "pass",sa_user,sa_pass,
+	testNew, err := test.New("http://example.com", "blah", "blah", "pass", sa_user, sa_pass,
 		ptrstr)
 
-	if err != nil{
+	if err != nil {
 		t.Errorf("Could not instantiate %v %v", err, testNew)
 	}
 
 	testcreate, err := testNew.Create()
 
-	if err != nil{
+	if err != nil {
 		t.Errorf("Could not generate credentialid %v %v", err, testcreate)
 	}
 }
-

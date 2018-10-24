@@ -1,13 +1,13 @@
 package jobbuilder_test
 
 import (
-	"testing"
-	"JAG/jobbuilder"
+	"github.com/brharrelldev/jag/jobbuilder"
 	"os"
+	"testing"
 )
 
 type MockedFileInterface interface {
-	Create(name string)(*MockFile, error)
+	Create(name string) (*MockFile, error)
 }
 
 type MockedJbuilder struct {
@@ -15,31 +15,27 @@ type MockedJbuilder struct {
 	endpoint string
 	apitoken string
 	jconfig  string
-
-
 }
 
 type MockFile struct {
 	os.File
-
 }
 
-func (m MockedJbuilder) Create(name string)(*MockFile, error){
+func (m MockedJbuilder) Create(name string) (*MockFile, error) {
 
-	return  &MockFile{}, nil
+	return &MockFile{}, nil
 }
 
 func TestJBuilderConfig_New(t *testing.T) {
 
 	config := new(jobbuilder.JBuilderConfig)
 
-	jb, err := config.New("http://example.com", "11111111111", "/tmp/test.ini" )
+	jb, err := config.New("http://example.com", "11111111111", "/tmp/test.ini")
 
-	if err != nil{
+	if err != nil {
 		t.Fatalf("Could not instantiate object %v with value %v", jb, err)
 	}
 }
-
 
 func TestJBuilderConfig_BuildFile(t *testing.T) {
 
@@ -54,7 +50,7 @@ func TestJBuilderConfig_BuildFile(t *testing.T) {
 	jb := jobbuilder.JBuilderConfig{}
 	config, err := jb.New("http://example.com", "11111111", "/tmp/test.ini")
 
-	if err !=  nil{
+	if err != nil {
 		t.Errorf("Could not be intantiated %v \n", err)
 	}
 
