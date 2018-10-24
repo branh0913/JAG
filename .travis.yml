@@ -1,5 +1,9 @@
 go_import_path: github.com/brharrelldev/jag
 
+
+env:
+  - GO111MOULDE=on
+
 language: go
 
 go:
