@@ -11,4 +11,4 @@ go:
 
 script:
   - go mod verify
-  - go build -o /usr/local/jag  -v
+  - go build
