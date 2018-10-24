@@ -1,14 +1,9 @@
-go_import_path: github.com/branh0913/JAG
+go_import_path: github.com/brharrelldev/jag
 
 language: go
 
-install:
-  - go get github.com/branh0913/JAG/commands
-  - go get github.com/branh0913/JAG/jobbuilder
-
 go:
-  - "1.9"
-  - "1.10"
+  - "1.11"
 
 script:
   - go test -v ../.
