@@ -2,7 +2,7 @@ go_import_path: github.com/brharrelldev/jag
 
 
 env:
-  - GO111MOULDE=on
+  - GO111MODULE=on
 
 language: go
 
