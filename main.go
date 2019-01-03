@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"github.com/brharrelldev/jag/docker"
 	"github.com/brharrelldev/jag/startup"
 	"github.com/spf13/viper"
 	"log"
@@ -35,7 +37,7 @@ func check(fr FirstRun) bool {
 		return false
 	}
 
-	if jInit {
+	if !jInit {
 		return false
 	}
 
@@ -57,6 +59,11 @@ func main() {
 
 	if check(firstRun) {
 		log.Println("First run detected, initializing startup ")
-	}
+		images, err := docker.BuildDocker()
+		if err != nil {
+			fmt.Println(err)
+		}
 
+		fmt.Println(images)
+	}
 }
