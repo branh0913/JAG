@@ -31,6 +31,7 @@ func BuildDocker() (*BuildResults, error) {
 
 	if _, err := os.Stat("tmp/myfile.tar"); os.IsNotExist(err) {
 		tararch := archivex.TarFile{}
+
 		f, err := os.Open("Dockerfile")
 		if err != nil {
 			logrus.Fatalf("could not open dockerfile %v", err)
@@ -39,9 +40,17 @@ func BuildDocker() (*BuildResults, error) {
 		if err != nil {
 			logrus.Fatalf("could not get file info %v", err)
 		}
-		tararch.Create("tmp/myfile.tar")
-		tararch.Add("Dockerfile", f, fInfo)
-		tararch.Close()
+		if err := tararch.Create("tmp/myfile.tar"); err != nil {
+			log.Println("error occured when trying to create archive", err)
+		}
+		if err := tararch.Add("Dockerfile", f, fInfo); err != nil {
+			log.Println("error occured when trying to add Dockerfile", err)
+		}
+
+		if err := tararch.Close(); err != nil {
+			log.Println(err)
+
+		}
 		tarFile, err = os.Open("tmp/myfile.tar")
 		if err != nil {
 			fmt.Println(err)
@@ -71,6 +80,7 @@ func BuildDocker() (*BuildResults, error) {
 		All:     false,
 		Filters: filters.Args{},
 	})
+
 	if err != nil {
 		logrus.Errorf("could not list images due to %v", err)
 	}
