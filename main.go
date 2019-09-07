@@ -30,7 +30,6 @@ var (
 
 	//action command
 	createCmd *cobra.Command
-
 )
 
 func init() {
@@ -74,7 +73,16 @@ func main() {
 
 	if check(fr) {
 		log.Println("First run detected, initializing startup ")
-		images, err := docker.BuildDocker()
+		dockr, err := docker.NewDockerBuild(&docker.DockerBuildRequest{
+			Name:        "Test",
+			ArchiveFile: "/tmp/archive.tar",
+			DockerFile:  "Dockerfile",
+			Tag:         "test-tag",
+		})
+		if err != nil{
+			log.Fatalf("could not instantiate new docker instance %v", err)
+		}
+		images, err := dockr.BuildDocker()
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -82,31 +90,26 @@ func main() {
 		fmt.Println(images)
 	}
 
-
 	createCmd = &cobra.Command{
 		Use: "create [resource]",
 		Run: func(cmd *cobra.Command, args []string) {
 
-			if len(args) >= 0{
+			if len(args) >= 0 {
 				fmt.Println("no resource provided")
 				cmd.Usage()
 				os.Exit(1)
 			}
 
-
-
+			fmt.Println(config)
 			switch args[0] {
 			case "jobs":
-				if *config == ""{
+				if *config == "" {
 					fmt.Println("no config file provided")
 					cmd.Usage()
 					os.Exit(1)
 				}
 
-
-				jobCreateRequest := &jobbuilder.JobCreateRequest{
-
-				}
+				jobCreateRequest := &jobbuilder.JobCreateRequest{}
 
 				fmt.Println(jobCreateRequest)
 
@@ -121,7 +124,7 @@ func main() {
 	config = createCmd.Flags().StringP("config", "c", "config", "config=<path>")
 
 	rootCmd = &cobra.Command{
-		Use:  "jag [action] [resource]",
+		Use: "jag [action] [resource]",
 	}
 
 	rootCmd.AddCommand(createCmd)

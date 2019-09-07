@@ -52,7 +52,8 @@ func (f *FTC) Write() error {
 		log.Println("issue happened when trying to execute statement ", err)
 	}
 
-	fmt.Print(res.LastInsertId())
+	fmt.Println(res)
+
 
 	return nil
 

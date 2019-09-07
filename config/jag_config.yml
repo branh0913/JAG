@@ -1,0 +1,6 @@
+---
+jenkins:
+  endpoint: http://locahost:3000/scriptText
+docker:
+  dockerfile: Dockerfile
+  archive: /tmp/archive.tar
