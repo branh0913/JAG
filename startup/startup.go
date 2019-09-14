@@ -16,8 +16,7 @@ func Check(dir, fileName string) (bool, error) {
 
 	//Has jag run before?  Check if db file exists and metadata
 	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
-		err = os.Mkdir(dir, os.ModePerm)
-		if err != nil {
+		if err = os.Mkdir(dir, os.ModePerm);err != nil {
 			log.Println("Could not create dir ", err)
 			return true, nil
 		}
